@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Работа 2.08 — Вакуумный диод в магнитном поле</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#102C26;--navy2:#1a3d35;--navy3:#234f44;--silver:#F7E7CE;--silver2:#f0ddc0;--silver3:#e8d0a8;--silver-bg:#fdf6ea;--white:#ffffff;--ink:#0e1f1b;--ink2:#3a5048;--ink3:#7a9a92;--border:rgba(16,44,38,0.12);--border2:rgba(16,44,38,0.06);--red:#8b2e1a;--red-bg:#fdf2ee;--gold:#8a6020;--gold-bg:#fdf8ed;--green-ok:#1a5a30;--green-bg:#eef7f1;--warn:#7a5c00;--warn-bg:#fdf8ed;--mono:'DM Mono','Courier New',monospace;--sans:'DM Sans',system-ui,sans-serif;--display:'Syne',system-ui,sans-serif}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--silver-bg);color:var(--ink);font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.hdr{background:var(--navy);color:var(--silver);padding:0 48px;height:62px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:300}
+.hdr-badge{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;background:rgba(232,238,247,0.12);border:1px solid rgba(232,238,247,0.25);color:var(--silver);padding:4px 12px;border-radius:2px;flex-shrink:0}
+.hdr h1{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-0.3px;color:var(--silver)}
+.hdr-meta{margin-left:auto;font-size:11px;color:rgba(232,238,247,0.4);font-weight:300;letter-spacing:0.5px}
+.nav{background:var(--navy);border-bottom:1px solid rgba(232,238,247,0.1);padding:0 48px;display:flex;position:sticky;top:62px;z-index:200;overflow-x:auto;gap:0}
+.nav::-webkit-scrollbar{display:none}
+.nb{font-family:var(--display);font-size:11px;font-weight:500;letter-spacing:1px;color:rgba(232,238,247,0.45);padding:14px 22px;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;white-space:nowrap;transition:color .2s,border-color .2s;text-transform:uppercase}
+.nb:hover{color:rgba(232,238,247,0.75)}
+.nb.on{color:var(--silver);border-bottom-color:var(--silver2)}
+.wrap{max-width:1120px;margin:0 auto;padding:36px 48px 96px}
+.tab{display:none}.tab.on{display:block}
+.pg-title{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--navy);margin-bottom:6px;line-height:1.1}
+.pg-sub{font-size:13px;color:var(--ink3);margin-bottom:32px;font-weight:300}
+.sec-label{display:flex;align-items:center;gap:14px;margin:36px 0 16px}
+.sec-num{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--silver2);background:var(--navy);padding:3px 9px;border-radius:2px;letter-spacing:1px}
+.sec-text{font-family:var(--display);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink2)}
+.sec-line{height:1px;flex:1;background:var(--border)}
+.card{background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(13,31,60,0.06)}
+.card-hd{padding:13px 20px;border-bottom:1px solid var(--border2);font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink2);display:flex;align-items:center;justify-content:space-between;background:rgba(232,238,247,0.35)}
+.card-hd.dark{background:var(--navy);color:var(--silver);border-bottom:none}
+.card-body{padding:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink2)}
+.fld label .u{font-weight:400;text-transform:none;color:var(--ink3);letter-spacing:0}
+.fld input[type=number],.fld input[type=text]{font-family:var(--mono);font-size:14px;background:var(--silver-bg);border:1.5px solid var(--border);border-radius:5px;padding:9px 13px;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s,background .15s;width:100%}
+.fld input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(13,31,60,0.08);background:var(--white)}
+.fld .hint{font-size:11px;color:var(--ink3);font-weight:300}
+.derived{background:rgba(13,31,60,0.04);border:1.5px solid rgba(13,31,60,0.14);border-radius:6px;padding:12px 18px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.derived .d-lbl{font-family:var(--display);font-size:12px;font-weight:700;color:var(--navy)}
+.derived .d-eq{color:var(--ink3);font-size:12px}
+.derived .d-val{font-family:var(--mono);font-size:17px;font-weight:500;color:var(--navy)}
+.tbl-wrap{overflow-x:auto}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}
+table.dt th{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--silver);background:var(--navy);padding:11px 14px;text-align:center;white-space:nowrap;border-right:1px solid rgba(232,238,247,0.1)}
+table.dt th:last-child{border-right:none}
+table.dt th.sub{background:var(--navy2)}
+table.dt td{border-bottom:1px solid var(--border2);text-align:center;vertical-align:middle;padding:2px 4px}
+table.dt tr:hover td{background:rgba(232,238,247,0.45)}
+table.dt td.rn{font-family:var(--mono);font-size:11px;color:var(--ink3);width:36px;padding:8px 4px;background:rgba(232,238,247,0.3);border-right:1px solid var(--border)}
+table.dt td.cv{font-family:var(--mono);font-size:12px;color:var(--navy);padding:8px 12px;font-weight:500}
+table.dt td.cv.em{color:var(--ink3);font-weight:400}
+table.dt td input{font-family:var(--mono);font-size:13px;border:1.5px solid transparent;border-radius:4px;padding:6px 8px;width:100px;text-align:center;background:transparent;color:var(--ink);outline:none;transition:border-color .12s,background .12s}
+table.dt td input:focus{border-color:var(--navy);background:var(--white)}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 10px;border-radius:4px;transition:color .12s,background .12s;line-height:1}
+.del-btn:hover{color:var(--red);background:var(--red-bg)}
+.fm{border:1.5px solid var(--border);border-left:4px solid var(--navy);border-radius:0 6px 6px 0;padding:16px 20px;margin:12px 0;background:rgba(232,238,247,0.18);line-height:1.9}
+.fm .fn{font-family:var(--display);font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.fm .fe{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--navy)}
+.fm .fe.hi{color:var(--red)}
+.fm .fs{font-size:12px;color:var(--ink2);margin-top:4px;font-weight:300}
+.fm .fr{display:inline-block;background:rgba(13,31,60,0.06);border:1.5px solid rgba(13,31,60,0.15);border-radius:5px;padding:7px 16px;font-family:var(--mono);font-size:14px;font-weight:500;color:var(--navy);margin-top:12px}
+.big-r{background:var(--navy);border-radius:8px;padding:22px 28px;display:flex;align-items:center;gap:22px;margin:18px 0}
+.big-r .sym{font-family:'Syne',Georgia,serif;font-size:40px;font-weight:800;color:var(--silver);opacity:0.7;min-width:46px;font-style:italic}
+.big-r .lbl{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(232,238,247,0.55);margin-bottom:5px}
+.big-r .val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--silver)}
+.big-r .u2{font-size:13px;color:rgba(232,238,247,0.55);margin-left:6px;font-weight:300}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.chip{background:var(--silver-bg);border:1.5px solid var(--border);border-radius:6px;padding:10px 16px;min-width:130px;transition:border-color .15s}
+.chip:hover{border-color:var(--navy)}
+.chip .cl{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink3);margin-bottom:4px}
+.chip .cv2{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--ink)}
+.chip.hl{background:var(--navy);border-color:var(--navy)}
+.chip.hl .cl{color:rgba(232,238,247,0.5)}
+.chip.hl .cv2{color:var(--silver)}
+.ch-wrap{position:relative;height:460px;background:var(--white);border-radius:6px;overflow:hidden}
+.pp-trim-btn{padding:5px 14px;border:1px solid var(--border);border-radius:4px;background:transparent;font-family:var(--mono);font-size:11px;cursor:pointer;color:var(--ink2);transition:all .12s}
+.pp-trim-btn:hover,.pp-trim-btn.on{background:var(--navy);color:var(--silver);border-color:var(--navy)}
+.gser-ctrl{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.gser-ctrl-hd{display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(232,238,247,0.35);flex-wrap:wrap}
+.gser-ctrl-hd strong{font-family:var(--display);font-size:12px;font-weight:700;color:var(--navy)}
+.gser-ctrl-body{padding:14px 18px;background:var(--white);display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.gser-ctrl-body{grid-template-columns:1fr}}
+.notice{border-radius:6px;padding:11px 16px;font-size:13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-weight:300}
+.notice.info{background:rgba(13,31,60,0.06);border:1.5px solid rgba(13,31,60,0.15);color:var(--navy2)}
+.notice.warn{background:var(--warn-bg);border:1.5px solid #e8d090;color:var(--warn)}
+.notice.good{background:var(--green-bg);border:1.5px solid #a8d8b0;color:var(--green-ok)}
+.notice.bad{background:var(--red-bg);border:1.5px solid #f0b8b0;color:var(--red)}
+.rlines{display:flex;flex-direction:column}
+.rline{display:flex;align-items:baseline;gap:8px 12px;padding:9px 0;border-bottom:1px solid var(--border2);flex-wrap:wrap}
+.rline:last-child{border-bottom:none}
+.rline .rk{font-size:13px;color:var(--ink2);flex:1 1 200px;min-width:0;font-weight:400}
+.rline .rv{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--navy);white-space:nowrap}
+.rline .rv.hi{color:var(--red)}
+.rline .ru{font-size:11px;color:var(--ink3);font-weight:300;white-space:nowrap}
+.rline .ru{font-size:11px;color:var(--ink3);font-weight:300}
+.rline.sep{padding:4px 0;border-bottom:1px dashed var(--border2);min-height:0}
+.pt{width:100%;border-collapse:collapse;font-size:13px}
+.pt td{padding:9px 16px;border-bottom:1px solid var(--border2)}
+.pt tr:last-child td{border-bottom:none}
+.pt td:first-child{font-family:var(--mono);font-weight:500;color:var(--navy);width:70px;font-size:12px}
+.pt td:nth-child(2){font-family:var(--mono);color:var(--ink);font-weight:400}
+.pt td:nth-child(3){color:var(--ink3);font-size:11px;width:50px}
+.pt td:nth-child(4){color:var(--ink3);font-size:11px;text-align:right;font-weight:300}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:5px;font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;cursor:pointer;border:1.5px solid transparent;transition:all .15s}
+.btn-outline{background:transparent;color:var(--ink2);border-color:var(--border)}
+.btn-outline:hover{border-color:var(--navy);color:var(--navy)}
+.btn-solid{background:var(--navy);color:var(--silver);border-color:var(--navy)}
+.btn-solid:hover{background:var(--navy2)}
+.scale-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.scale-row .lbl{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(232,238,247,0.5)}
+.scale-btn{padding:4px 12px;border:1px solid rgba(232,238,247,0.2);border-radius:3px;background:transparent;font-family:var(--mono);font-size:11px;cursor:pointer;color:rgba(232,238,247,0.55);transition:all .12s}
+.scale-btn:hover,.scale-btn.on{background:rgba(232,238,247,0.15);color:var(--silver);border-color:rgba(232,238,247,0.5)}
+.proto{background:var(--navy);border-radius:8px;padding:32px 36px;font-family:var(--mono);font-size:12px;line-height:2;white-space:pre-wrap;overflow-x:auto;max-height:700px;overflow-y:auto;color:rgba(232,238,247,0.85)}
+.proto::-webkit-scrollbar{width:6px;height:6px}
+.proto::-webkit-scrollbar-track{background:rgba(255,255,255,0.05)}
+.proto::-webkit-scrollbar-thumb{background:rgba(232,238,247,0.2);border-radius:3px}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--navy);color:var(--silver);padding:11px 22px;border-radius:6px;font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:0.5px;opacity:0;transform:translateY(10px);transition:all .22s cubic-bezier(.16,1,.3,1);pointer-events:none;z-index:999;box-shadow:0 8px 24px rgba(13,31,60,0.3)}
+.toast.on{opacity:1;transform:translateY(0)}
+/* Series block */
+.ser-block{border:1.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.ser-hdr{display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(16,44,38,0.05);border-bottom:1px solid var(--border2);flex-wrap:wrap}
+.ser-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ser-hdr strong{font-family:var(--display);font-size:12px;font-weight:700;color:var(--navy)}
+.ser-hdr input.u-inp{font-family:var(--mono);font-size:13px;background:var(--white);border:1.5px solid var(--border);border-radius:4px;padding:4px 10px;width:80px;color:var(--ink);outline:none;transition:border-color .12s}
+.ser-hdr input.u-inp:focus{border-color:var(--navy)}
+.ser-body{padding:12px 16px}
+.icr-row{display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border);flex-wrap:wrap}
+.icr-row label{font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink2)}
+.icr-row input{font-family:var(--mono);font-size:13px;background:var(--silver-bg);border:1.5px solid var(--border);border-radius:5px;padding:7px 11px;width:110px;color:var(--ink);outline:none;transition:border-color .12s}
+.icr-row input:focus{border-color:var(--navy)}
+.icr-comp{font-family:var(--mono);font-size:12px;color:var(--navy);font-weight:500}
+.em-badge{display:inline-block;background:rgba(13,31,60,0.06);border:1px solid var(--border);border-radius:4px;padding:3px 10px;margin-left:6px;font-size:12px}
+hr.div{border:none;border-top:1px solid var(--border);margin:20px 0}
+@media(max-width:768px){.wrap{padding:18px 18px 72px}.g2,.g3,.g4{grid-template-columns:1fr}.hdr,.nav{padding-left:18px;padding-right:18px}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-badge">2.08</div>
+  <h1>Вакуумный диод в магнитном поле</h1>
+  <span class="hdr-meta">СПбПУ Петра Великого · Метод магнетрона</span>
+</header>
+
+<nav class="nav">
+  <button class="nb on"  onclick="go('params',this)">Параметры</button>
+  <button class="nb"     onclick="go('theory',this)">Теория</button>
+  <button class="nb"     onclick="go('data',this)">Табл. 8.1 — Данные</button>
+  <button class="nb"     onclick="go('graph',this)">График I(I<sub>L</sub>)</button>
+  <button class="nb"     onclick="go('calc',this)">Обработка</button>
+  <button class="nb"     onclick="go('proto',this)">Протокол</button>
+</nav>
+
+<div class="wrap">
+
+<!-- ═══ ПАРАМЕТРЫ ═══ -->
+<div id="tab-params" class="tab on">
+  <div class="pg-title">Параметры</div>
+  <div class="pg-sub">Геометрия диода и параметры соленоида — со стенда установки</div>
+
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hd">Диод (геометрия)</div>
+        <div class="card-body">
+          <div class="g2">
+            <div class="fld">
+              <label>r<sub>a</sub> <span class="u">радиус анода, м</span></label>
+              <input type="number" id="ra" value="0.0135" step="0.0001" min="0.0001">
+              <div class="hint">r<sub>a</sub> — радиус анода диода со стенда</div>
+            </div>
+            <div class="fld">
+              <label>Δr<sub>a</sub> <span class="u">м</span></label>
+              <input type="number" id="dra" value="0.0005" step="0.0001" min="0">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-hd">Соленоид и резистор (формула 8.9)</div>
+        <div class="card-body">
+          <div class="g4">
+            <div class="fld">
+              <label>N <span class="u">витков</span></label>
+              <input type="number" id="pN" value="1000" step="1" min="1">
+            </div>
+            <div class="fld">
+              <label>l <span class="u">м</span></label>
+              <input type="number" id="pl" value="0.240" step="0.001" min="0.001">
+              <div class="hint">длина соленоида</div>
+            </div>
+            <div class="fld">
+              <label>R <span class="u">Ом</span></label>
+              <input type="number" id="pR" value="100" step="1" min="1">
+              <div class="hint">токоизм. резистор</div>
+            </div>
+            <div class="fld">
+              <label>ΔR <span class="u">Ом</span></label>
+              <input type="number" id="dpR" value="1" step="0.1" min="0">
+            </div>
+          </div>
+          <div class="derived">
+            <span class="d-lbl">k = μ₀·N/l</span>
+            <span class="d-eq">=</span>
+            <span class="d-val" id="k-val">—</span>
+            <span class="d-lbl">Тл/А</span>
+            <span class="d-eq">&nbsp;&nbsp;&nbsp; 8/r²<sub>a</sub> =</span>
+            <span class="d-val" id="ra2-val">—</span>
+            <span class="d-lbl">м⁻²</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Сводка параметров (СИ)</div>
+    <div class="card-body" style="padding:0">
+      <table class="pt"><tbody id="pt-body"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ТЕОРИЯ ═══ -->
+<div id="tab-theory" class="tab">
+  <div class="pg-title">Теоретические основы</div>
+  <div class="pg-sub">Ключевые уравнения методички к работе 2.08</div>
+
+  <div class="fm">
+    <div class="fn">Сила Лоренца — уравнение (8.1)</div>
+    <div class="fe">F = F<sup>e</sup> + F<sup>M</sup> = −eĒ − e[v̄, B̄]</div>
+    <div class="fs">Магнитная составляющая перпендикулярна скорости — не меняет модуль, только направление</div>
+  </div>
+  <div class="fm">
+    <div class="fn">Индукция соленоида — формула (8.9)</div>
+    <div class="fe">B = μ₀ · I<sub>L</sub> · N / l</div>
+    <div class="fs">μ₀ = 4π·10⁻⁷ Гн/м;  N — число витков;  l — длина соленоида;  I<sub>L</sub> — ток соленоида</div>
+  </div>
+  <div class="fm">
+    <div class="fn">Критическая индукция и удельный заряд — формула (8.7)</div>
+    <div class="fe hi">e/m = 8U / (B²<sub>кр</sub> · r²<sub>a</sub>)</div>
+    <div class="fs">Вывод: при B = B<sub>кр</sub> траектория электрона касается анода — eU = ½mv²<sub>φ</sub>, v<sub>φ</sub> = eBr<sub>a</sub>/2m</div>
+    <div class="fr">B<sub>кр</sub> = (2/r<sub>a</sub>) · √(2mU/e)  →  e/m = 8U / (B²<sub>кр</sub> · r²<sub>a</sub>)</div>
+  </div>
+  <div class="fm">
+    <div class="fn">Нахождение B<sub>кр</sub> — метод касательной (рис. 8.1б)</div>
+    <div class="fe">Ступенька I<sub>d</sub>(I<sub>L</sub>) при B < B<sub>кр</sub> — горизонт. участок; B > B<sub>кр</sub> — спад</div>
+    <div class="fs">I<sub>кр</sub> — ток соленоида в точке пересечения продолжения плато и касательной к крутому спаду.
+    B<sub>кр</sub> = k · I<sub>кр</sub>, где k = μ₀·N/l.</div>
+  </div>
+  <div class="fm">
+    <div class="fn">Объёмный заряд — уточнённая формула (8.8)</div>
+    <div class="fe">B*<sub>кр</sub> = (2/r<sub>a</sub>) · √(2mU/e) / √(1−(r*/r<sub>a</sub>)²)</div>
+    <div class="fs">r* — положение потенциального минимума. При r* ≥ 0.2·r<sub>a</sub> поправка ≥ 5%. Кривая 2б рис. 8.1б — режим объёмного заряда.</div>
+  </div>
+  <div class="fm" style="border-left-color:var(--red)">
+    <div class="fn">Статистическая обработка — погрешность ⟨e/m⟩</div>
+    <div class="fe hi">σ<sub>⟨e/m⟩</sub> = √[Σ((e/m)<sub>i</sub> − ⟨e/m⟩)² / (n·(n−1))]</div>
+    <div class="fe hi">Δ(e/m) = t(P=0.90, f=n−1) · σ<sub>⟨e/m⟩</sub></div>
+    <div class="fs">Рассматриваем n значений (e/m)<sub>i</sub> при разных U как многократные наблюдения одной величины; f = n−1 степеней свободы.</div>
+  </div>
+</div>
+
+<!-- ═══ ДАННЫЕ ═══ -->
+<div id="tab-data" class="tab">
+  <div class="pg-title">Таблица 8.1</div>
+  <div class="pg-sub">I<sub>d</sub>(I<sub>L</sub>) при нескольких анодных напряжениях U. I<sub>d</sub> = U<sub>R</sub>/R — ток диода через резистор.</div>
+
+  <div class="notice info" style="margin-bottom:18px">
+    <span>ℹ</span>
+    <span>Введите ток соленоида I<sub>L</sub> (мА) и U<sub>R</sub> (мВ) на резисторе для каждого опыта.
+    После построения графика найдите I<sub>кр</sub> методом касательной (рис. 8.1б)
+    и введите в поле каждой серии.</span>
+  </div>
+
+  <button class="btn btn-solid" onclick="addSeries()" style="margin-bottom:18px">+ Добавить серию (новое U)</button>
+  <div id="series-container"></div>
+</div>
+
+<!-- ═══ ГРАФИК ═══ -->
+<div id="tab-graph" class="tab">
+  <div class="pg-title">График I<sub>d</sub>(I<sub>L</sub>)</div>
+  <div class="pg-sub">Постройте по методике (рис. 8.1б): горизонталь по плато + касательная к спаду → точка пересечения = I<sub>кр</sub>.</div>
+
+  <div class="notice info" style="margin-bottom:16px">
+    <span>ℹ</span>
+    <span>
+      Для каждой серии задайте границы двух участков:
+      <strong>«Плато»</strong> — горизонтальный участок (B &lt; B<sub>кр</sub>),
+      <strong>«Спад»</strong> — крутой спадающий участок (B &gt; B<sub>кр</sub>).
+      Калькулятор проведёт МНК по каждому участку и найдёт I<sub>кр</sub> как пересечение двух прямых.
+      Полученное I<sub>кр,авто</sub> перенесите в поле «I<sub>кр</sub>» на вкладке «Данные».
+    </span>
+  </div>
+
+  <div class="card">
+    <div class="card-hd dark">
+      <span style="color:var(--silver);opacity:0.85">I<sub>d</sub>(I<sub>L</sub>) — все серии</span>
+      <div class="scale-row">
+        <span class="lbl">Шаг X:</span>
+        <button class="scale-btn on" id="scX-auto" onclick="setScaleX('auto',this)">авто</button>
+        <button class="scale-btn" id="scX-1" onclick="setScaleX('1',this)">×1</button>
+        <button class="scale-btn" id="scX-2" onclick="setScaleX('2',this)">×2</button>
+        <button class="scale-btn" id="scX-5" onclick="setScaleX('5',this)">×5</button>
+        <span class="lbl" style="margin-left:12px">Шаг Y:</span>
+        <button class="scale-btn on" id="scY-auto" onclick="setScaleY('auto',this)">авто</button>
+        <button class="scale-btn" id="scY-1" onclick="setScaleY('1',this)">×1</button>
+        <button class="scale-btn" id="scY-2" onclick="setScaleY('2',this)">×2</button>
+        <button class="scale-btn" id="scY-5" onclick="setScaleY('5',this)">×5</button>
+      </div>
+    </div>
+    <div class="card-body" style="padding:16px">
+      <div class="ch-wrap"><canvas id="mainChart"></canvas></div>
+      <div class="chips" id="graph-chips"></div>
+    </div>
+  </div>
+
+  <!-- Per-series trim controls -->
+  <div id="graph-series-ctrls"></div>
+</div>
+
+<!-- ═══ ОБРАБОТКА ═══ -->
+<div id="tab-calc" class="tab">
+  <div class="pg-title">Обработка результатов</div>
+  <div class="pg-sub">Формулы (8.7) и (8.9): B<sub>кр,i</sub> = k·I<sub>кр,i</sub>, (e/m)<sub>i</sub> = 8U<sub>i</sub>/(B²<sub>кр,i</sub>·r²<sub>a</sub>)</div>
+
+  <div class="sec-label">
+    <div class="sec-num">8.7</div>
+    <div class="sec-text">Таблица (e/m)<sub>i</sub></div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd dark">
+      <span style="color:var(--silver);opacity:0.85">B<sub>кр,i</sub> и (e/m)<sub>i</sub> для каждого U</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="dt">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>U, В</th>
+            <th>I<sub>кр</sub>, мА</th>
+            <th>B<sub>кр</sub> = k·I<sub>кр</sub>, Тл</th>
+            <th class="sub">(e/m)<sub>i</sub>, Кл/кг</th>
+            <th class="sub">(e/m)<sub>i</sub>, ×10¹¹</th>
+          </tr>
+        </thead>
+        <tbody id="em-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec-label" style="margin-top:28px">
+    <div class="sec-num">Стат.</div>
+    <div class="sec-text">Погрешность ⟨e/m⟩ — P = 0.90</div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="notice info" style="margin-bottom:12px">
+    <span>ℹ</span>
+    <span>Набор (e/m)<sub>i</sub> рассматривается как результаты многократных независимых наблюдений.
+    Стандартная ошибка среднего: σ<sub>⟨e/m⟩</sub> = √[ΣΔ²<sub>i</sub>/(n·(n−1))].
+    Доверительный интервал: Δ(e/m) = t(P=0.90, f=n−1)·σ<sub>⟨e/m⟩</sub>.</span>
+  </div>
+
+  <div class="g2" style="align-items:start">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-hd">Отклонения Δ<sub>i</sub> = (e/m)<sub>i</sub> − ⟨e/m⟩</div>
+      <div class="tbl-wrap">
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>i</th>
+              <th>U, В</th>
+              <th>(e/m)<sub>i</sub> ×10¹¹</th>
+              <th>Δ<sub>i</sub>, ×10¹¹</th>
+              <th>Δ²<sub>i</sub></th>
+            </tr>
+          </thead>
+          <tbody id="dev-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-hd">Статистика</div>
+      <div class="card-body" style="padding:4px 22px">
+        <div class="rlines" id="stat-lines"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="big-r" id="em-big-r">
+    <div class="sym">e/m</div>
+    <div>
+      <div class="lbl">Удельный заряд электрона — результат</div>
+      <div class="val" id="em-big-val">—</div>
+    </div>
+    <div style="margin-left:auto">
+      <div class="lbl">Табличное значение (CODATA 2018)</div>
+      <div class="val">1.7588 <span class="u2">×10¹¹ Кл/кг</span></div>
+    </div>
+  </div>
+
+  <div id="compare-notice"></div>
+</div>
+
+<!-- ═══ ПРОТОКОЛ ═══ -->
+<div id="tab-proto" class="tab">
+  <div class="pg-title">Протокол</div>
+  <div class="pg-sub">Вывод напишите самостоятельно — ниже указаны все ключевые данные и шаги вычислений.</div>
+  <div class="card">
+    <div class="card-hd dark">
+      <span style="color:var(--silver);opacity:0.85">Текст протокола</span>
+      <button class="btn" style="background:rgba(232,238,247,0.12);color:var(--silver);border-color:rgba(232,238,247,0.25);font-size:10px" onclick="copyProto()">Скопировать</button>
+    </div>
+    <div class="proto" id="protocol">Введите данные для генерации протокола...</div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast">Скопировано ✓</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════════════════════════
+const MU0      = 4 * Math.PI * 1e-7;
+const EM_TABLE = 1.7588e11;   // CODATA 2018
+
+// Student t, P=0.90, f = degrees of freedom (index = f)
+const T90 = [NaN,6.314,2.920,2.353,2.132,2.015,1.943,1.895,1.860,1.833,1.812,1.796,1.782,1.771,1.761,1.753,1.746,1.740,1.734,1.729,1.725];
+function tStudent90(f) {
+  if (f <= 0) return NaN;
+  if (f < T90.length) return T90[f];
+  return 1.645;
+}
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let seriesList = [];
+let UID        = 0;
+let mainChart  = null;
+let scX        = 'auto';
+let scY        = 'auto';
+
+const SCOL = ['#102C26','#8b2e1a','#1a5a30','#8a6020','#2d4a8a','#5a2d7a'];
+
+// ══════════════════════════════════════════════════════
+//  FORMAT  (identical to lab201)
+// ══════════════════════════════════════════════════════
+function sci(x, sig) {
+  if (!isFinite(x) || x === null || x === undefined) return '—';
+  sig = sig || 4;
+  const abs = Math.abs(x);
+  if (abs === 0) return '0';
+  if (abs >= 0.01 && abs < 100000) return String(parseFloat(x.toPrecision(sig)));
+  const exp  = Math.floor(Math.log10(abs));
+  const mant = parseFloat((x / Math.pow(10, exp)).toFixed(sig - 1));
+  return `${mant}·10<sup>${exp}</sup>`;
+}
+function sciP(x, sig) {   // plain text for protocol
+  if (!isFinite(x) || x === null || x === undefined) return '—';
+  sig = sig || 4;
+  const abs = Math.abs(x);
+  if (abs === 0) return '0';
+  if (abs >= 0.01 && abs < 100000) return String(parseFloat(x.toPrecision(sig)));
+  const exp  = Math.floor(Math.log10(abs));
+  const mant = parseFloat((x / Math.pow(10, exp)).toFixed(sig - 1));
+  return `${mant}×10^${exp}`;
+}
+const el  = (id, html) => { const e = document.getElementById(id); if (e) e.innerHTML = html; };
+const elt = (id, t)    => { const e = document.getElementById(id); if (e) e.textContent = t; };
+
+// ══════════════════════════════════════════════════════
+//  PARAMS
+// ══════════════════════════════════════════════════════
+function getP() {
+  return {
+    ra:  parseFloat(document.getElementById('ra').value)  || 0,
+    dra: parseFloat(document.getElementById('dra').value) || 0,
+    N:   parseFloat(document.getElementById('pN').value)  || 0,
+    l:   parseFloat(document.getElementById('pl').value)  || 0,
+    R:   parseFloat(document.getElementById('pR').value)  || 0,
+    dR:  parseFloat(document.getElementById('dpR').value) || 0,
+  };
+}
+function kCoeff(p) { return (p.N>0&&p.l>0) ? MU0*p.N/p.l : 0; }
+function calcBcr(Icr_mA, k) { return k * Icr_mA * 1e-3; }
+function calcEM(U, Bcr, p)   { return (Bcr>0&&p.ra>0) ? 8*U/(Bcr*Bcr*p.ra*p.ra) : NaN; }
+
+['ra','dra','pN','pl','pR','dpR'].forEach(id =>
+  document.getElementById(id).addEventListener('change', recalc));
+
+// ══════════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════════
+function go(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  document.getElementById('tab-' + name).classList.add('on');
+  btn.classList.add('on');
+  recalc();
+}
+
+// ══════════════════════════════════════════════════════
+//  SERIES
+// ══════════════════════════════════════════════════════
+function addSeries(preset) {
+  const id    = ++UID;
+  const color = SCOL[(seriesList.length) % SCOL.length];
+  seriesList.push({
+    id, color,
+    U:         preset ? preset.U    : (seriesList.length===0 ? 4 : 6),
+    rows:      preset ? preset.rows : Array.from({length:10}, ()=>({IL:'',UR:''})),
+    Icr:       preset ? preset.Icr  : '',
+    platEnd:   preset ? (preset.platEnd  ?? 5) : 5,   // last index (0-based) of plateau
+    slopeStart:preset ? (preset.slopeStart ?? 8) : 8,  // first index of steep slope
+  });
+  renderAllSeries();
+  recalc();
+}
+
+function delSeries(id) {
+  seriesList = seriesList.filter(s=>s.id!==id);
+  renderAllSeries(); recalc();
+}
+
+function addSeriesRow(id) {
+  const s = seriesList.find(s=>s.id===id);
+  if (s) { s.rows.push({IL:'',UR:''}); renderOneSeries(id); recalc(); }
+}
+function delSeriesRow(id, ri) {
+  const s = seriesList.find(s=>s.id===id);
+  if (s && s.rows.length > 2) { s.rows.splice(ri,1); renderOneSeries(id); recalc(); }
+}
+function setSU(id, v)   { const s=seriesList.find(s=>s.id===id); if(s){s.U=parseFloat(v)||0; updIcrComp(id); recalc();} }
+function setSIcr(id,v)  { const s=seriesList.find(s=>s.id===id); if(s){s.Icr=v===''?'':parseFloat(v); updIcrComp(id); recalc();} }
+function setSCell(id,ri,field,v) {
+  const s=seriesList.find(s=>s.id===id); if(!s||!s.rows[ri]) return;
+  s.rows[ri][field] = v===''?'':parseFloat(v);
+  updIdCell(id,ri); recalc();
+}
+
+function updIdCell(id, ri) {
+  const s  = seriesList.find(s=>s.id===id); if(!s) return;
+  const p  = getP();
+  const ce = document.getElementById(`idc-${id}-${ri}`); if(!ce) return;
+  const r  = s.rows[ri];
+  if (r.UR!==''&&isFinite(+r.UR)&&p.R>0) ce.innerHTML = sci(+r.UR/p.R*1000,4);
+  else ce.textContent = '—';
+}
+
+function updIcrComp(id) {
+  const s  = seriesList.find(s=>s.id===id);
+  const ce = document.getElementById(`icrc-${id}`);
+  if (!s||!ce) return;
+  if (s.Icr!==''&&isFinite(+s.Icr)&&+s.Icr>0) {
+    const p   = getP();
+    const k   = kCoeff(p);
+    const Bcr = calcBcr(+s.Icr, k);
+    const em  = calcEM(s.U, Bcr, p);
+    ce.innerHTML = `B<sub>кр</sub> = ${sci(Bcr,4)} Тл
+      <span class="em-badge">(e/m) = ${isFinite(em)?((em/1e11).toFixed(3)):' —'} ×10¹¹</span>`;
+  } else {
+    ce.textContent = '—';
+  }
+}
+
+function renderAllSeries() {
+  const c = document.getElementById('series-container');
+  c.innerHTML = '';
+  seriesList.forEach(s => {
+    const d = document.createElement('div'); d.id=`sb-${s.id}`; c.appendChild(d);
+    renderOneSeries(s.id);
+  });
+}
+
+function renderOneSeries(id) {
+  const s  = seriesList.find(s=>s.id===id);
+  const ce = document.getElementById(`sb-${id}`);
+  if (!s||!ce) return;
+  const p   = getP();
+  const k   = kCoeff(p);
+
+  let icrComp = '—';
+  if (s.Icr!==''&&isFinite(+s.Icr)&&+s.Icr>0) {
+    const Bcr = calcBcr(+s.Icr,k);
+    const em  = calcEM(s.U,Bcr,p);
+    icrComp = `B<sub>кр</sub> = ${sci(Bcr,4)} Тл <span class="em-badge">(e/m) = ${isFinite(em)?((em/1e11).toFixed(3)):' —'} ×10¹¹</span>`;
+  }
+
+  ce.innerHTML = `
+  <div class="ser-block">
+    <div class="ser-hdr">
+      <div class="ser-dot" style="background:${s.color}"></div>
+      <strong>U =</strong>
+      <input class="u-inp" type="number" min="0.5" step="0.5" value="${s.U}"
+        onchange="setSU(${id},this.value)" style="border-color:${s.color}55">
+      <strong style="color:var(--ink2)">В</strong>
+      <button class="btn btn-outline" onclick="addSeriesRow(${id})" style="font-size:10px;padding:5px 12px">+ строка</button>
+      <button class="btn btn-outline" onclick="delSeries(${id})" style="font-size:10px;padding:5px 12px;color:var(--ink3)">✕ Серия</button>
+    </div>
+    <div class="ser-body">
+      <div class="tbl-wrap">
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>№</th><th>I<sub>L</sub>, мА</th><th>U<sub>R</sub>, мВ</th>
+              <th class="sub">I<sub>d</sub> = U<sub>R</sub>/R, мкА</th><th></th>
+            </tr>
+          </thead>
+          <tbody>${s.rows.map((row,ri)=>`
+            <tr>
+              <td class="rn">${ri+1}</td>
+              <td><input type="number" step="1" value="${row.IL}" placeholder="0"
+                onchange="setSCell(${id},${ri},'IL',this.value)"></td>
+              <td><input type="number" step="0.1" value="${row.UR}" placeholder="0.0"
+                onchange="setSCell(${id},${ri},'UR',this.value)"></td>
+              <td id="idc-${id}-${ri}" class="cv em">${
+                (row.UR!==''&&isFinite(+row.UR)&&p.R>0) ? sci(+row.UR/p.R*1000,4) : '—'
+              }</td>
+              <td><button class="del-btn" onclick="delSeriesRow(${id},${ri})">×</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="icr-row">
+        <label>I<sub>кр</sub> <span style="font-weight:400;text-transform:none;font-size:11px;color:var(--ink3)">(метод касательной), мА</span></label>
+        <input type="number" min="0" step="0.5" value="${s.Icr}" id="icri-${id}"
+          placeholder="напр. 195" onchange="setSIcr(${id},this.value)">
+        <span class="icr-comp" id="icrc-${id}">${icrComp}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  CHART  (same helpers as lab201)
+// ══════════════════════════════════════════════════════
+function niceStep(range, ticks) {
+  if (!range||range<=0) return 1;
+  const raw=range/ticks, exp=Math.floor(Math.log10(raw)), p=Math.pow(10,exp), m=raw/p;
+  return m<=1?1*p:m<=2?2*p:m<=5?5*p:10*p;
+}
+function forcedStep(range, mult) {
+  if (!range||range<=0) return 1;
+  const raw=range/7, exp=Math.floor(Math.log10(raw)), p=Math.pow(10,exp);
+  let step=mult*p; if(range/step<3) step=step/2; return step;
+}
+function fmtTick(v) {
+  if (v===0) return '0';
+  const abs=Math.abs(v);
+  if (abs>=0.001&&abs<10000) return String(parseFloat(v.toPrecision(4)));
+  const exp=Math.floor(Math.log10(abs)), mant=parseFloat((v/Math.pow(10,exp)).toFixed(2));
+  const sup={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  return `${mant}·10${String(exp).split('').map(c=>sup[c]||c).join('')}`;
+}
+
+const vLinePlugin = {
+  id:'vl208',
+  afterDraw(chart,_,opts) {
+    if (!opts||!opts.lines) return;
+    const {ctx,scales:{x,y}} = chart;
+    opts.lines.forEach(({xVal,color,label}) => {
+      if (!isFinite(xVal)) return;
+      const px=x.getPixelForValue(xVal);
+      ctx.save();
+      ctx.setLineDash([6,4]);ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.globalAlpha=0.7;
+      ctx.beginPath();ctx.moveTo(px,y.top);ctx.lineTo(px,y.bottom);ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.fillStyle=color;ctx.font=`500 10px 'DM Mono','Courier New',monospace`;
+      ctx.textAlign='center';ctx.globalAlpha=0.9;
+      ctx.fillText(label, px, y.top+14);
+      ctx.restore();
+    });
+  }
+};
+
+// ── MNK (least squares) for a set of points → {a, b, r2, sigA}
+function mnk(pts) {
+  const n=pts.length; if(n<2) return null;
+  const sx=pts.reduce((s,p)=>s+p.x,0), sy=pts.reduce((s,p)=>s+p.y,0);
+  const sxx=pts.reduce((s,p)=>s+p.x*p.x,0), sxy=pts.reduce((s,p)=>s+p.x*p.y,0);
+  const D=n*sxx-sx*sx; if(!D) return null;
+  const a=(n*sxy-sx*sy)/D, b=(sy-a*sx)/n;
+  const yM=sy/n;
+  const ssT=pts.reduce((s,p)=>s+(p.y-yM)**2,0);
+  const ssR=pts.reduce((s,p)=>s+(p.y-a*p.x-b)**2,0);
+  const r2=ssT>0?1-ssR/ssT:1;
+  const s2=n>2?ssR/(n-2):0; const s=Math.sqrt(s2);
+  const xM=sx/n, sxxc=pts.reduce((s,p)=>s+(p.x-xM)**2,0);
+  const sigA=sxxc>0?s/Math.sqrt(sxxc):0;
+  return {a,b,r2,sigA,n};
+}
+
+// ── Intersection of y=a1*x+b1 and y=a2*x+b2
+function intersect(a1,b1,a2,b2) {
+  if (Math.abs(a1-a2)<1e-20) return null;
+  const x=(b2-b1)/(a1-a2);
+  return {x, y:a1*x+b1};
+}
+
+// ── Get sorted valid points for a series
+function getSeriesPts(ser, p) {
+  return ser.rows
+    .filter(r=>r.IL!==''&&r.UR!==''&&isFinite(+r.IL)&&isFinite(+r.UR)&&p.R>0)
+    .map(r=>({x:+r.IL, y:+r.UR/p.R*1000}))
+    .sort((a,b)=>a.x-b.x);
+}
+
+// ── Compute plateau + slope fit for one series; return fit info
+function computeFits(ser, pts) {
+  if (pts.length < 4) return null;
+  const n=pts.length;
+  // platEnd: last index of plateau (0..n-1), default = floor(n*0.35)
+  const pe  = Math.min(Math.max(0, ser.platEnd  ?? Math.floor(n*0.35)), n-2);
+  const ss  = Math.min(Math.max(pe+1, ser.slopeStart ?? Math.floor(n*0.6)), n-1);
+  const platPts  = pts.slice(0, pe+1);
+  const slopePts = pts.slice(ss);
+  if (platPts.length < 2 || slopePts.length < 2) return null;
+  const platFit  = mnk(platPts);
+  const slopeFit = mnk(slopePts);
+  if (!platFit||!slopeFit) return null;
+  const cross = intersect(platFit.a, platFit.b, slopeFit.a, slopeFit.b);
+  return {platFit, slopeFit, cross, pe, ss, platPts, slopePts};
+}
+
+// ── Render per-series trim controls on graph tab
+function renderGraphCtrls() {
+  const c=document.getElementById('graph-series-ctrls'); if(!c) return;
+  if (!seriesList.length) { c.innerHTML=''; return; }
+  c.innerHTML = seriesList.map(ser=>{
+    const p=getP();
+    const pts=getSeriesPts(ser,p);
+    const n=pts.length;
+    const fits=computeFits(ser,pts);
+    const icrAuto=fits&&fits.cross&&isFinite(fits.cross.x)?fits.cross.x.toFixed(1):'—';
+    const col=ser.color;
+    return `<div class="gser-ctrl">
+      <div class="gser-ctrl-hd">
+        <div style="width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0"></div>
+        <strong>U = ${ser.U} В</strong>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--ink3)">${n} точек</span>
+        <span style="margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--navy);font-weight:500">
+          I<sub>кр,авто</sub> = <b style="color:${col}">${icrAuto} мА</b>
+          ${fits&&fits.cross?`→ перенесите в поле I<sub>кр</sub>`:''}
+        </span>
+      </div>
+      <div class="gser-ctrl-body">
+        <div>
+          <div style="font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink2);margin-bottom:8px">
+            Плато (участок 1) — последняя точка №
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            ${Array.from({length:Math.min(n,12)},(_,i)=>`
+              <button class="pp-trim-btn ${(ser.platEnd??Math.floor(n*0.35))===i?'on':''}"
+                onclick="setSeriesPlatEnd(${ser.id},${i})">${i+1}</button>`).join('')}
+          </div>
+          ${fits?`<div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:8px">
+            МНК: I<sub>d</sub> = ${sci(fits.platFit.a,3)}·I<sub>L</sub> + ${sci(fits.platFit.b,4)}
+            &nbsp; R² = ${fits.platFit.r2.toFixed(4)}
+          </div>`:''}
+        </div>
+        <div>
+          <div style="font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink2);margin-bottom:8px">
+            Спад (участок 2) — первая точка №
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            ${Array.from({length:Math.min(n,12)},(_,i)=>`
+              <button class="pp-trim-btn ${(ser.slopeStart??Math.floor(n*0.6))===i?'on':''}"
+                onclick="setSeriesSlopeStart(${ser.id},${i})">${i+1}</button>`).join('')}
+          </div>
+          ${fits?`<div style="font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:8px">
+            МНК: I<sub>d</sub> = ${sci(fits.slopeFit.a,3)}·I<sub>L</sub> + ${sci(fits.slopeFit.b,4)}
+            &nbsp; R² = ${fits.slopeFit.r2.toFixed(4)}
+          </div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setSeriesPlatEnd(id, idx) {
+  const s=seriesList.find(s=>s.id===id); if(!s) return;
+  s.platEnd=idx;
+  if (s.slopeStart<=idx) s.slopeStart=idx+1;
+  recalc();
+}
+function setSeriesSlopeStart(id, idx) {
+  const s=seriesList.find(s=>s.id===id); if(!s) return;
+  s.slopeStart=idx;
+  if (s.platEnd>=idx) s.platEnd=idx-1;
+  recalc();
+}
+
+function initChart() {
+  const ctx = document.getElementById('mainChart').getContext('2d');
+  const base = {
+    responsive:true, maintainAspectRatio:false,
+    layout:{padding:{top:16,right:24,bottom:12,left:10}},
+    plugins:{
+      legend:{display:true,position:'top',
+        labels:{font:{family:"'DM Sans',sans-serif",size:11},color:'#3a5048',boxWidth:16,padding:14}},
+      tooltip:{
+        callbacks:{label:c=>`(I_L=${c.parsed.x} мА,  I_d=${sciP(c.parsed.y,4)} мкА)`},
+        backgroundColor:'rgba(16,44,38,0.92)',
+        titleFont:{family:"'DM Sans',sans-serif",size:11},
+        bodyFont:{family:"'DM Mono',monospace",size:11},
+        padding:9,cornerRadius:5,
+        titleColor:'rgba(247,231,206,0.7)',bodyColor:'#F7E7CE',
+        borderColor:'rgba(247,231,206,0.15)',borderWidth:1
+      },
+      vl208:{lines:[]}
+    },
+    scales:{
+      x:{type:'linear',
+        title:{display:true,text:'I_L, мА',font:{family:"'DM Sans',sans-serif",size:12,weight:'600'},color:'#3a5048',padding:{top:8}},
+        grid:{color:'rgba(16,44,38,0.07)'},
+        ticks:{font:{family:"'DM Mono',monospace",size:10},color:'#3a5048',maxRotation:0,callback:fmtTick},
+        border:{color:'#3a5048',width:1.5}},
+      y:{title:{display:true,text:'I_d, мкА',font:{family:"'DM Sans',sans-serif",size:12,weight:'600'},color:'#3a5048',padding:{bottom:8}},
+        grid:{color:'rgba(16,44,38,0.07)'},
+        ticks:{font:{family:"'DM Mono',monospace",size:10},color:'#3a5048',callback:fmtTick},
+        border:{color:'#3a5048',width:1.5}}
+    }
+  };
+  mainChart = new Chart(ctx, {type:'scatter', data:{datasets:[]}, options:base, plugins:[vLinePlugin]});
+}
+
+function setScaleX(mode,btn) {
+  scX=mode;
+  document.querySelectorAll('[id^="scX-"]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); recalc();
+}
+function setScaleY(mode,btn) {
+  scY=mode;
+  document.querySelectorAll('[id^="scY-"]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on'); recalc();
+}
+
+function updChart(p,k) {
+  if (!mainChart) return;
+  const ds=[]; const vlines=[]; const allX=[]; const allY=[];
+
+  seriesList.forEach((ser,si)=>{
+    const col  = ser.color;
+    const pts  = getSeriesPts(ser, p);
+    if (!pts.length) return;
+    pts.forEach(pt=>{allX.push(pt.x);allY.push(pt.y);});
+
+    // ── raw data ──
+    ds.push({
+      label:`U = ${ser.U} В`, data:pts,
+      backgroundColor:col, borderColor:col,
+      pointRadius:5, pointHoverRadius:8,
+      showLine:true, tension:0.18, borderWidth:1.5,
+      order: 3,
+    });
+
+    const fits = computeFits(ser, pts);
+    if (fits) {
+      const {platFit, slopeFit, cross, platPts, slopePts} = fits;
+      const xMax = Math.max(...pts.map(p=>p.x))*1.08;
+
+      // ── plateau МНК line (horizontal-ish) ──
+      const px0=0, px1=cross?Math.min(cross.x*1.15, xMax):xMax;
+      ds.push({
+        label:`Плато (U=${ser.U}В)`,
+        data:[{x:px0,y:platFit.a*px0+platFit.b},{x:px1,y:platFit.a*px1+platFit.b}],
+        type:'line', borderColor:col, borderWidth:2,
+        borderDash:[8,4], pointRadius:0, tension:0,
+        backgroundColor:'transparent', order:2,
+        showInLegend:false,
+      });
+
+      // ── slope (tangent) МНК line ──
+      const sx0=cross?Math.max(0,cross.x*0.85):platPts[platPts.length-1].x;
+      const sx1=xMax;
+      ds.push({
+        label:`Касат. (U=${ser.U}В)`,
+        data:[{x:sx0,y:slopeFit.a*sx0+slopeFit.b},{x:sx1,y:slopeFit.a*sx1+slopeFit.b}],
+        type:'line', borderColor:col, borderWidth:2,
+        borderDash:[3,3], pointRadius:0, tension:0,
+        backgroundColor:'transparent', order:2,
+        showInLegend:false,
+      });
+
+      // ── intersection dot ──
+      if (cross && isFinite(cross.x) && cross.y >= 0) {
+        ds.push({
+          label:`I_кр = ${cross.x.toFixed(1)} мА (U=${ser.U}В)`,
+          data:[{x:cross.x, y:cross.y}],
+          type:'scatter',
+          backgroundColor:'#ffffff',
+          borderColor:col, borderWidth:2.5,
+          pointRadius:8, pointHoverRadius:10,
+          pointStyle:'circle',
+          order:1,
+        });
+        vlines.push({xVal:cross.x, color:col, label:`I_кр≈${cross.x.toFixed(0)}`});
+      }
+    } else if (ser.Icr!==''&&isFinite(+ser.Icr)&&+ser.Icr>0) {
+      vlines.push({xVal:+ser.Icr, color:col, label:`I_кр=${ser.Icr}мА`});
+    }
+  });
+
+  mainChart.data.datasets=ds;
+  mainChart.options.plugins.vl208.lines=vlines;
+
+  if (allX.length) {
+    const xMax=Math.max(...allX)*1.1, yMax=Math.max(...allY)*1.12;
+    const xStep=scX==='auto'?niceStep(xMax,6):forcedStep(xMax,parseFloat(scX));
+    const yStep=scY==='auto'?niceStep(yMax,6):forcedStep(yMax,parseFloat(scY));
+    mainChart.options.scales.x.min=0; mainChart.options.scales.x.max=xMax; mainChart.options.scales.x.ticks.stepSize=xStep;
+    mainChart.options.scales.y.min=0; mainChart.options.scales.y.max=yMax; mainChart.options.scales.y.ticks.stepSize=yStep;
+  }
+  mainChart.update('none');
+
+  // ── chips under chart ──
+  const chips = document.getElementById('graph-chips'); if(!chips) return;
+  const anyFits = seriesList.some(ser=>{
+    const pts=getSeriesPts(ser,p); return computeFits(ser,pts)!==null;
+  });
+  if (!anyFits) { chips.innerHTML=''; return; }
+
+  chips.innerHTML = seriesList.map(ser=>{
+    const pts=getSeriesPts(ser,p); if(!pts.length) return '';
+    const fits=computeFits(ser,pts); if(!fits) return '';
+    const {platFit,slopeFit,cross} = fits;
+    const col=ser.color;
+    const icrStr = cross&&isFinite(cross.x)?cross.x.toFixed(1):'—';
+    return `
+      <div class="chip hl" style="background:${col}18;border-color:${col}44;min-width:160px">
+        <div class="cl" style="color:${col}cc">U = ${ser.U} В</div>
+        <div class="cv2" style="color:${col};font-size:17px">I<sub>кр</sub> ≈ ${icrStr} мА</div>
+      </div>
+      <div class="chip" style="min-width:220px">
+        <div class="cl">Плато — МНК</div>
+        <div class="cv2" style="font-size:12px">I<sub>d</sub> = ${sci(platFit.a,3)}·I<sub>L</sub> + ${sci(platFit.b,4)}&nbsp; R²=${platFit.r2.toFixed(4)}</div>
+      </div>
+      <div class="chip" style="min-width:220px">
+        <div class="cl">Касательная — МНК</div>
+        <div class="cv2" style="font-size:12px">I<sub>d</sub> = ${sci(slopeFit.a,3)}·I<sub>L</sub> + ${sci(slopeFit.b,4)}&nbsp; R²=${slopeFit.r2.toFixed(4)}</div>
+      </div>`;
+  }).join('<div style="width:100%;height:0;margin:0"></div>');
+
+  renderGraphCtrls();
+}
+
+// ══════════════════════════════════════════════════════
+//  MAIN RECALC
+// ══════════════════════════════════════════════════════
+function recalc() {
+  const p = getP();
+  const k = kCoeff(p);
+
+  // params summary
+  el('k-val',   k>0   ? sci(k,4) : '—');
+  el('ra2-val', p.ra>0 ? sci(8/(p.ra*p.ra),4) : '—');
+
+  const ptb = document.getElementById('pt-body');
+  if (ptb) ptb.innerHTML = [
+    ['r_a',       sci(p.ra,4),            'м',    `Δr_a = ${p.dra} м  (δ = ${p.ra>0?((p.dra/p.ra*100).toFixed(1)):'-'} %)`],
+    ['r_a²',      sci(p.ra*p.ra,4),       'м²',   ''],
+    ['N',         p.N,                    'витков',''],
+    ['l',         sci(p.l,4),             'м',    ''],
+    ['R',         p.R,                    'Ом',   `ΔR = ${p.dR} Ом`],
+    ['k=μ₀N/l',  sci(k,5),               'Тл/А', 'коэф. соленоида (формула 8.9)'],
+    ['8/r_a²',    sci(8/(p.ra*p.ra||1),4),'м⁻²',  'коэф. формулы (8.7)'],
+  ].map(([sym,val,unit,note])=>
+    `<tr><td>${sym}</td><td>${val}</td><td>${unit}</td><td>${note}</td></tr>`
+  ).join('');
+
+  seriesList.forEach(s=>updIcrComp(s.id));
+  updChart(p,k);
+  renderGraphCtrls();
+  buildCalc(p,k);
+  buildProtocol(p,k);
+}
+
+// ══════════════════════════════════════════════════════
+//  CALC
+// ══════════════════════════════════════════════════════
+function buildCalc(p,k) {
+  const valid = seriesList.filter(s=>s.Icr!==''&&isFinite(+s.Icr)&&+s.Icr>0&&s.U>0);
+  const emTb  = document.getElementById('em-tbody');
+  const devTb = document.getElementById('dev-tbody');
+  if (!emTb) return;
+
+  if (!valid.length) {
+    emTb.innerHTML=`<tr><td colspan="6" class="cv em" style="padding:16px">Введите I<sub>кр</sub> хотя бы для одной серии на вкладке «Данные»</td></tr>`;
+    devTb.innerHTML='';
+    el('stat-lines','<div class="rline"><div class="rk" style="color:var(--ink3)">Введите I<sub>кр</sub> на вкладке «Данные»</div><div class="rv"></div><div class="ru"></div></div>');
+    el('em-big-val','—'); el('compare-notice','');
+    return;
+  }
+
+  const emVals = valid.map(sv=>{const Bcr=calcBcr(+sv.Icr,k); return calcEM(sv.U,Bcr,p);});
+
+  emTb.innerHTML = valid.map((sv,i)=>{
+    const Bcr=calcBcr(+sv.Icr,k), em=emVals[i];
+    return `<tr>
+      <td class="rn">${i+1}</td>
+      <td class="cv">${sv.U}</td>
+      <td class="cv">${sv.Icr}</td>
+      <td class="cv">${sci(Bcr,4)}</td>
+      <td class="cv">${sci(em,5)}</td>
+      <td class="cv" style="font-weight:600;color:var(--navy)">${isFinite(em)?((em/1e11).toFixed(4)):' —'}</td>
+    </tr>`;
+  }).join('');
+
+  const n    = emVals.length;
+  const mean = emVals.reduce((a,b)=>a+b,0)/n;
+
+  devTb.innerHTML = valid.map((sv,i)=>{
+    const em=emVals[i], d=em-mean;
+    return `<tr>
+      <td class="rn">${i+1}</td>
+      <td class="cv em">${sv.U}</td>
+      <td class="cv">${isFinite(em)?((em/1e11).toFixed(4)):' —'}</td>
+      <td class="cv">${isFinite(d)?((d>=0?'+':'')+(d/1e11).toFixed(4)):' —'}</td>
+      <td class="cv">${sci(d*d,4)}</td>
+    </tr>`;
+  }).join('');
+
+  if (n<2) {
+    el('stat-lines',[
+      ['n = 1','','нужно ≥ 2 для расчёта погрешности'],
+      ['⟨e/m⟩', `${sci(mean,5)} Кл/кг`, `= ${(mean/1e11).toFixed(4)} ×10¹¹`],
+    ].map(([rk,rv,ru])=>`<div class="rline"><div class="rk">${rk}</div><div class="rv">${rv}</div><div class="ru">${ru}</div></div>`).join(''));
+    el('em-big-val',`${sci(mean,4)} <span class="u2">Кл/кг</span>`);
+    el('compare-notice','');
+    buildProtocol(p,k); return;
+  }
+
+  const varSum = emVals.reduce((s,v)=>s+(v-mean)**2,0);
+  const sigma  = Math.sqrt(varSum/(n*(n-1)));
+  const f      = n-1;
+  const t      = tStudent90(f);
+  const delta  = t*sigma;
+  const relErr = delta/Math.abs(mean);
+
+  el('stat-lines',[
+    ['n',              `${n}`,                    `f = n−1 = ${f}`],
+    ['⟨e/m⟩',         `${(mean/1e11).toFixed(4)} ×10¹¹`,   'Кл/кг'],
+    ['ΣΔ²<sub>i</sub>',`${sci(varSum,4)}`,         ''],
+    ['σ<sub>⟨e/m⟩</sub>',`${sci(sigma,5)} Кл/кг`,  `= √[${sci(varSum,4)}/(${n}·${f})]`],
+    [`t(0.90; f=${f})`, `${t.toFixed(3)}`,          'коэф. Стьюдента'],
+    ['Δ(e/m) = t · σ', `${sci(delta,4)} Кл/кг`,    `= ${(delta/1e11).toFixed(4)} ×10¹¹`],
+    ['δ(e/m)',          `${(relErr*100).toFixed(2)} %`, '= Δ/|⟨e/m⟩|'],
+    ['─','',''],
+    ['e/m = ⟨e/m⟩ ± Δ', `(${(mean/1e11).toFixed(3)} ± ${(delta/1e11).toFixed(3)}) ×10¹¹ Кл/кг`, 'P = 0.90'],
+  ].map(([rk,rv,ru])=>{
+    if(rk==='─') return `<div class="rline sep"></div>`;
+    const hi = rk.startsWith('e/m =');
+    return `<div class="rline"><div class="rk">${rk}</div><div class="rv ${hi?'hi':''}">${rv}</div><div class="ru">${ru}</div></div>`;
+  }).join(''));
+
+  el('em-big-val',`(${(mean/1e11).toFixed(3)} ± ${(delta/1e11).toFixed(3)}) <span class="u2">×10¹¹ Кл/кг</span>`);
+
+  const diff=Math.abs(mean-EM_TABLE)/EM_TABLE*100;
+  let cls,msg;
+  if (Math.abs(mean-EM_TABLE)<=delta) {
+    cls='good'; msg=`✓ Табличное значение 1.7588×10¹¹ попадает в доверительный интервал. Расхождение: ${diff.toFixed(1)} %.`;
+  } else if (diff<15) {
+    cls='warn'; msg=`⚠ Расхождение ${diff.toFixed(1)} % — приемлемое. Табличное не попадает в интервал; уточните I<sub>кр</sub> или r<sub>a</sub>.`;
+  } else {
+    cls='bad';  msg=`✗ Расхождение ${diff.toFixed(1)} % — значительное. Проверьте I<sub>кр</sub>, r<sub>a</sub>, N, l.`;
+  }
+  el('compare-notice',`<div class="notice ${cls}"><span></span><span>${msg}</span></div>`);
+}
+
+// ══════════════════════════════════════════════════════
+//  PROTOCOL
+// ══════════════════════════════════════════════════════
+function buildProtocol(p,k) {
+  const proto = document.getElementById('protocol'); if(!proto) return;
+  const D='─'.repeat(62); const L=[];
+  const pad=(s,n)=>String(s).padEnd(n);
+
+  L.push('ПРОТОКОЛ ЛАБОРАТОРНОЙ РАБОТЫ');
+  L.push('Работа 2.08  «Вакуумный диод в магнитном поле»');
+  L.push('СПбПУ Петра Великого · Метод магнетрона');
+  L.push(D); L.push('');
+
+  L.push('1. ПАРАМЕТРЫ УСТАНОВКИ');
+  L.push('');
+  L.push(`  r_a   = (${p.ra} +/- ${p.dra}) м   (delta_ra = ${p.ra>0?((p.dra/p.ra*100).toFixed(1)):'-'} %)`);
+  L.push(`  N     = ${p.N} витков`);
+  L.push(`  l     = ${p.l} м`);
+  L.push(`  R     = (${p.R} +/- ${p.dR}) Ом`);
+  L.push(`  r_a^2 = ${sciP(p.ra*p.ra,4)} м^2`);
+  L.push(`  k = mu_0*N/l = 4pi*10^-7 * ${p.N} / ${p.l} = ${sciP(k,5)} Тл/А`);
+  L.push(`  8/r_a^2 = ${sciP(8/(p.ra*p.ra||1),4)} м^-2`);
+  L.push('');
+
+  L.push(D);
+  L.push('2. ТАБЛИЦА 8.1 — РЕЗУЛЬТАТЫ ИЗМЕРЕНИЙ');
+  seriesList.forEach((ser,si)=>{
+    L.push('');
+    L.push(`  Серия ${si+1}: U = ${ser.U} В`);
+    L.push(`  ${'-'.repeat(46)}`);
+    const vr=ser.rows.filter(r=>r.IL!==''&&r.UR!=='');
+    if (vr.length>0) {
+      L.push(`  | №  | I_L, мА | U_R, мВ | I_d = U_R/R, мкА |`);
+      L.push(`  |----|---------|---------|-----------------|`);
+      vr.forEach((r,i)=>{
+        const Id=p.R>0?sciP(+r.UR/p.R*1000,4):'—';
+        L.push(`  | ${pad(i+1,2)} | ${pad(String(r.IL),7)} | ${pad(String(r.UR),7)} | ${pad(Id,15)} |`);
+      });
+    } else { L.push('  (нет данных)'); }
+    if (ser.Icr!==''&&isFinite(+ser.Icr)&&+ser.Icr>0) {
+      const Bcr=calcBcr(+ser.Icr,k), em=calcEM(ser.U,Bcr,p);
+      L.push('');
+      L.push(`  I_кр = ${ser.Icr} мА  (метод касательной, рис. 8.1б)`);
+      L.push(`  B_кр = k * I_кр = ${sciP(k,4)} * ${ser.Icr}e-3 = ${sciP(Bcr,5)} Тл`);
+      L.push(`  (e/m)_${si+1} = 8*${ser.U} / (${sciP(Bcr,4)}^2 * ${sciP(p.ra*p.ra,4)})`);
+      L.push(`          = ${sciP(8*ser.U,4)} / ${sciP(Bcr*Bcr*p.ra*p.ra,4)}`);
+      L.push(`          = ${sciP(em,5)} Кл/кг  =  ${isFinite(em)?((em/1e11).toFixed(4)):' —'} * 10^11 Кл/кг`);
+    } else { L.push('  I_кр не введён.'); }
+  });
+
+  const valid=seriesList.filter(s=>s.Icr!==''&&isFinite(+s.Icr)&&+s.Icr>0&&s.U>0);
+  if (valid.length>0) {
+    const emVals=valid.map(sv=>{const B=calcBcr(+sv.Icr,k);return calcEM(sv.U,B,p);});
+    const n=emVals.length, mean=emVals.reduce((a,b)=>a+b,0)/n;
+    L.push(''); L.push(D);
+    L.push('3. ОБРАБОТКА — СТАТИСТИКА');
+    L.push('');
+    emVals.forEach((v,i)=>L.push(`  i=${i+1}: (e/m)_${i+1} = ${sciP(v,5)} Кл/кг  =  ${isFinite(v)?((v/1e11).toFixed(4)):' —'} * 10^11`));
+    L.push('');
+    L.push(`  n = ${n}`);
+    L.push(`  <e/m> = ${sciP(mean,5)} Кл/кг  =  ${(mean/1e11).toFixed(4)} * 10^11`);
+    if (n>=2) {
+      const varSum=emVals.reduce((s,v)=>s+(v-mean)**2,0);
+      const sigma=Math.sqrt(varSum/(n*(n-1)));
+      const f=n-1, t=tStudent90(f), delta=t*sigma, relErr=delta/Math.abs(mean);
+      L.push('');
+      L.push('  Отклонения Delta_i = (e/m)_i - <e/m>:');
+      emVals.forEach((v,i)=>{const d=v-mean;L.push(`  i=${i+1}: Delta_${i+1}=${sciP(d,4)},  Delta_${i+1}^2=${sciP(d*d,4)}`);});
+      L.push('');
+      L.push(`  Sum(Delta_i^2) = ${sciP(varSum,5)}`);
+      L.push(`  sigma_<e/m> = sqrt[Sum(Delta^2)/(n*(n-1))] = sqrt[${sciP(varSum,4)}/(${n}*${f})] = ${sciP(sigma,5)}`);
+      L.push(`  f = n-1 = ${f}`);
+      L.push(`  t(P=0.90; f=${f}) = ${t.toFixed(3)}`);
+      L.push(`  Delta(e/m) = t * sigma = ${t.toFixed(3)} * ${sciP(sigma,4)} = ${sciP(delta,5)} Кл/кг`);
+      L.push(`             = ${(delta/1e11).toFixed(4)} * 10^11 Кл/кг`);
+      L.push(`  delta(e/m) = Delta/<e/m> = ${(relErr*100).toFixed(2)} %`);
+    }
+    L.push(''); L.push(D);
+    L.push('4. РЕЗУЛЬТАТ');
+    L.push('');
+    if (n>=2) {
+      const varSum=emVals.reduce((s,v)=>s+(v-mean)**2,0);
+      const delta=tStudent90(n-1)*Math.sqrt(varSum/(n*(n-1)));
+      L.push(`  e/m = (<e/m> +/- Delta(e/m))`);
+      L.push(`      = (${(mean/1e11).toFixed(3)} +/- ${(delta/1e11).toFixed(3)}) * 10^11 Кл/кг`);
+      L.push('  Доверительная вероятность P = 0.90');
+    } else {
+      L.push(`  e/m = ${(mean/1e11).toFixed(4)} * 10^11 Кл/кг  (одно значение, погрешность не определена)`);
+    }
+    const diff=Math.abs(mean-EM_TABLE)/EM_TABLE*100;
+    L.push('');
+    L.push(`  Табличное (CODATA 2018): (e/m)_табл = 1.7588 * 10^11 Кл/кг`);
+    L.push(`  Расхождение = ${diff.toFixed(1)} %`);
+  }
+
+  L.push(''); L.push(D);
+  L.push('5. ВЫВОД');
+  L.push('');
+  L.push('  [Напишите самостоятельно, опираясь на данные выше]');
+  L.push('');
+  if (valid.length>0) {
+    const mean=valid.map(sv=>{const B=calcBcr(+sv.Icr,k);return calcEM(sv.U,B,p);}).reduce((a,b)=>a+b,0)/valid.length;
+    L.push(`  Метод магнетрона; n = ${valid.length} значений U; формула (8.7)`);
+    L.push(`  Результат: e/m = ${(mean/1e11).toFixed(3)} * 10^11 Кл/кг`);
+  }
+  L.push('');
+  L.push(D);
+  L.push('Дата выполнения: ' + new Date().toLocaleDateString('ru-RU'));
+  proto.textContent = L.join('\n');
+}
+
+function copyProto() {
+  navigator.clipboard.writeText(document.getElementById('protocol').textContent)
+    .then(()=>{const t=document.getElementById('toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800);});
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT — demo data
+//  N=1000, l=0.240 м, ra=0.0135 м
+//  Физически корректные I_кр (идеал: 191, 234, 270 мА; ±2-3% разброс)
+//  → ⟨e/m⟩ ≈ 1.72×10¹¹ (расхождение ~2.2% с CODATA)
+// ══════════════════════════════════════════════════════
+addSeries({
+  U:4, Icr:195, platEnd:7, slopeStart:11,
+  rows:[
+    {IL:0,UR:240},{IL:20,UR:239},{IL:40,UR:238},{IL:60,UR:236},
+    {IL:80,UR:233},{IL:100,UR:229},{IL:120,UR:224},{IL:140,UR:217},
+    {IL:160,UR:208},{IL:180,UR:195},{IL:190,UR:186},{IL:200,UR:173},
+    {IL:210,UR:155},{IL:220,UR:131},{IL:230,UR:101},{IL:240,UR:66},
+    {IL:250,UR:32},{IL:260,UR:10},{IL:270,UR:2},
+  ]
+});
+addSeries({
+  U:6, Icr:238, platEnd:9, slopeStart:14,
+  rows:[
+    {IL:0,UR:350},{IL:20,UR:349},{IL:40,UR:347},{IL:60,UR:344},
+    {IL:80,UR:340},{IL:100,UR:335},{IL:120,UR:328},{IL:140,UR:320},
+    {IL:160,UR:310},{IL:180,UR:297},{IL:200,UR:282},{IL:210,UR:272},
+    {IL:220,UR:260},{IL:230,UR:245},{IL:240,UR:226},{IL:250,UR:202},
+    {IL:260,UR:172},{IL:270,UR:136},{IL:280,UR:94},{IL:290,UR:52},
+    {IL:300,UR:18},{IL:310,UR:4},
+  ]
+});
+addSeries({
+  U:8, Icr:268, platEnd:10, slopeStart:16,
+  rows:[
+    {IL:0,UR:450},{IL:20,UR:449},{IL:40,UR:447},{IL:60,UR:444},
+    {IL:80,UR:440},{IL:100,UR:434},{IL:120,UR:427},{IL:140,UR:418},
+    {IL:160,UR:407},{IL:180,UR:394},{IL:200,UR:379},{IL:220,UR:361},
+    {IL:240,UR:340},{IL:250,UR:328},{IL:260,UR:314},{IL:270,UR:297},
+    {IL:280,UR:276},{IL:290,UR:251},{IL:300,UR:221},{IL:310,UR:186},
+    {IL:320,UR:146},{IL:330,UR:101},{IL:340,UR:57},{IL:350,UR:18},
+    {IL:360,UR:3},
+  ]
+});
+
+initChart();
+recalc();
+</script>
+</body>
+</html>
